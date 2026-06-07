@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security Vulnerability
-    url: https://github.com/Serkanbyx/flappy-bird/blob/main/SECURITY.md
-    about: Please report security vulnerabilities through our security policy
+    url: https://github.com/serkanbyx/flappy-bird/security/policy
+    about: Please report security vulnerabilities privately via our security policy (see SECURITY.md)
   - name: Questions & Discussions
-    url: https://github.com/Serkanbyx/flappy-bird/discussions
+    url: https://github.com/serkanbyx/flappy-bird/discussions
     about: Ask questions and discuss ideas in GitHub Discussions

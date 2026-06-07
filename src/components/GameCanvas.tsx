@@ -119,25 +119,26 @@ const GameCanvas = () => {
 
   /* Render idle & gameOver states without physics */
   useEffect(() => {
-    if (status !== "playing") {
-      let lastTime = 0;
+    if (status === "playing") return;
 
-      const idleLoop = (timestamp: number) => {
-        if (lastTime === 0) lastTime = timestamp;
-        const dt = Math.min(timestamp - lastTime, 33.33);
-        lastTime = timestamp;
+    let lastTime = 0;
+    let rafId = 0;
 
-        render(dt);
+    const idleLoop = (timestamp: number) => {
+      if (lastTime === 0) lastTime = timestamp;
+      const dt = Math.min(timestamp - lastTime, 33.33);
+      lastTime = timestamp;
 
-        if (status === "idle") {
-          return requestAnimationFrame(idleLoop);
-        }
-        /* Render once more for gameOver */
-        return 0;
-      };
-      const id = requestAnimationFrame(idleLoop);
-      return () => cancelAnimationFrame(id);
-    }
+      render(dt);
+
+      /* Idle keeps animating the floating bird; gameOver renders a single frame */
+      if (status === "idle") {
+        rafId = requestAnimationFrame(idleLoop);
+      }
+    };
+
+    rafId = requestAnimationFrame(idleLoop);
+    return () => cancelAnimationFrame(rafId);
   }, [status, render]);
 
   return (

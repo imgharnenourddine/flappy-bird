@@ -90,16 +90,16 @@ Make sure you have the following installed:
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/REPOSITORY_NAME.git
+git clone https://github.com/YOUR_USERNAME/flappy-bird.git
 
 # Navigate to project directory
-cd REPOSITORY_NAME
+cd flappy-bird
 
-# Install dependencies (if applicable)
-# npm install / pip install -r requirements.txt / etc.
+# Install dependencies
+npm install
 
-# Start development server (if applicable)
-# npm start / python app.py / etc.
+# Start development server
+npm run dev
 ```
 
 ## Style Guidelines

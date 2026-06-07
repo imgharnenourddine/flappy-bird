@@ -46,8 +46,6 @@ export interface GameActions {
   flap: () => void;
   /** Update game state by one frame (deltaTime in ms) */
   tick: (deltaTime: number) => void;
-  /** End the game */
-  endGame: () => void;
   /** Reset to idle state */
   reset: () => void;
 }

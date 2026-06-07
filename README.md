@@ -9,6 +9,8 @@ A modern Flappy Bird clone built with React, TypeScript, and HTML5 Canvas. Navig
 
 - **Canvas-Based Rendering**: Smooth 60fps gameplay using HTML5 Canvas with custom-drawn bird, pipes, and environment
 - **Frame-Rate Independent Physics**: Delta-time based game loop ensures consistent gameplay on 60Hz, 144Hz, or any refresh rate
+- **Procedural Sound Effects**: Retro flap, score, hit, and swoosh sounds generated on the fly with the Web Audio API — no audio files needed, with a mute toggle
+- **Dynamic Difficulty**: Pipe speed ramps up gradually as your score climbs, capped to keep things playable
 - **Zustand State Management**: Lightweight and performant centralized game state with zero boilerplate
 - **Score Persistence**: Best score automatically saved and loaded from localStorage
 - **Retro Pixel Art Style**: Custom canvas-drawn bird with animated wing flaps, gradient pipes, and scrolling ground
@@ -53,7 +55,7 @@ npm install
 npm run dev
 ```
 
-4. Open your browser and navigate to `http://localhost:5173`
+4. Your browser opens automatically at `http://localhost:3000`
 
 ### Build for Production
 
@@ -62,15 +64,18 @@ npm run build
 npm run preview
 ```
 
+> Want the full construction story? See the step-by-step [Build Guide](docs/build-guide.md).
+
 ## Usage
 
 1. Open the game in your browser
 2. Press **Space**, **ArrowUp**, **Enter**, or **click/tap** anywhere to start the game
 3. Press **Space**, **ArrowUp**, or **click/tap** to make the bird flap its wings
 4. Navigate through the gaps between pipes without hitting them or the ground
-5. Each pipe pair passed earns **1 point**
-6. When game is over, press **Space**, **Enter**, or **click/tap** to restart
-7. Your best score is automatically saved and displayed on the start screen
+5. Each pipe pair passed earns **1 point** — pipes speed up as your score grows
+6. Toggle sound on/off anytime with the speaker button or the **M** key
+7. When game is over, press **Space**, **Enter**, or **click/tap** to restart
+8. Your best score is automatically saved and displayed on the start screen
 
 ## How It Works?
 
@@ -168,6 +173,9 @@ export const COLORS = {
 - ✅ Procedural pipe generation with random heights
 - ✅ AABB collision detection (pipes, ground, ceiling)
 - ✅ Score tracking with localStorage persistence
+- ✅ Procedural sound effects (flap, score, hit, swoosh) via Web Audio API
+- ✅ Mute toggle (button + "M" shortcut)
+- ✅ Difficulty progression (pipe speed increases with score)
 - ✅ Start screen with floating bird animation
 - ✅ Game over screen with score panel and "NEW!" badge
 - ✅ Keyboard support (Space, ArrowUp, Enter)
@@ -178,13 +186,13 @@ export const COLORS = {
 
 ### Future Features
 
-- [ ] Sound effects (flap, score, crash)
-- [ ] Difficulty progression (increasing speed over time)
 - [ ] Multiple bird skins / themes
 - [ ] Global leaderboard
 - [ ] Night mode / day-night cycle
 
 ## Contributing
+
+Contributions are welcome! Please read the [Contributing Guide](.github/CONTRIBUTING.md) and the [Code of Conduct](.github/CODE_OF_CONDUCT.md) before getting started. For security concerns, see the [Security Policy](.github/SECURITY.md).
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feat/amazing-feature`)

@@ -2,11 +2,11 @@ import { useRef, useCallback } from "react";
 import GameCanvas from "../components/GameCanvas";
 import StartScreen from "../components/StartScreen";
 import GameOverScreen from "../components/GameOverScreen";
+import SoundToggle from "../components/SoundToggle";
 import { useInputHandler } from "../hooks/useInputHandler";
 import { useSoundEffects } from "../hooks/useSoundEffects";
-import { useGameStore } from "../store/useGameStore";
+import { useGameInteraction } from "../hooks/useGameInteraction";
 import { useResponsiveCanvas } from "../hooks/useResponsiveCanvas";
-import { soundEngine } from "../engine/sound";
 
 /* ========================================
    GamePage
@@ -31,26 +31,8 @@ const GamePage = () => {
   /* Reactive sound effects (score, hit, swoosh) */
   useSoundEffects();
 
-  const status = useGameStore((s) => s.status);
-  const flap = useGameStore((s) => s.flap);
-  const startGame = useGameStore((s) => s.startGame);
-  const reset = useGameStore((s) => s.reset);
-
-  /** Dispatch the correct action based on current game status */
-  const handleInteraction = useCallback(() => {
-    switch (status) {
-      case "idle":
-        startGame();
-        break;
-      case "playing":
-        soundEngine.play("flap");
-        flap();
-        break;
-      case "gameOver":
-        reset();
-        break;
-    }
-  }, [status, startGame, flap, reset]);
+  /* Shared action dispatcher used by both touch and click inputs */
+  const handleInteraction = useGameInteraction();
 
   /** Handle touch: act immediately, flag to skip the subsequent click */
   const handleTouchStart = useCallback(
@@ -88,6 +70,9 @@ const GamePage = () => {
           {/* UI Overlays */}
           <StartScreen />
           <GameOverScreen />
+
+          {/* Sound mute / unmute control */}
+          <SoundToggle />
         </div>
 
         {/* Footer */}

@@ -252,14 +252,6 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
     set(newState);
   },
 
-  /** End the current game */
-  endGame: () => {
-    const { score, bestScore } = get();
-    const newBest = Math.max(score, bestScore);
-    saveBestScore(newBest);
-    set({ status: "gameOver", bestScore: newBest });
-  },
-
   /** Reset to initial idle state */
   reset: () => {
     set({
