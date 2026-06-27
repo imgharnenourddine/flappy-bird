@@ -18,6 +18,26 @@ A modern Flappy Bird clone built with React, TypeScript, and HTML5 Canvas. Navig
 - **Responsive Design**: Fullscreen centered layout that adapts to any screen size
 - **Accessible UI**: ARIA labels, keyboard navigation, and semantic HTML for screen readers
 
+## Screenshots
+
+### Start Screen
+
+The idle screen shows the title, tap-to-start instructions, and your saved best score.
+
+![Start screen with title, instructions, and best score](docs/screenshots/start-screen.png)
+
+### Gameplay
+
+Navigate through pipe gaps while the score counts up and difficulty ramps with each point.
+
+![Active gameplay with pipes, bird, and score](docs/screenshots/gameplay.png)
+
+### Game Over
+
+When you crash, the score panel compares your run against your all-time best.
+
+![Game over screen with score panel and restart prompt](docs/screenshots/game-over.png)
+
 ## Live Demo
 
 [🎮 View Live Demo](https://flappy-birddddd.netlify.app/)
