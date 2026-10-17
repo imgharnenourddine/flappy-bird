@@ -3,10 +3,11 @@ import {
   BIRD,
   PIPE,
   GROUND,
-  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
   SCORE,
   TARGET_FRAME_MS,
 } from "../constants/game";
+import { birdHitsRect, pipeRects, birdVerticalBounds } from "../engine/geometry";
 import type { GameState, GameActions, PipePair } from "../types/game";
 
 /* ========================================
@@ -39,6 +40,7 @@ const saveBestScore = (score: number): void => {
    ======================================== */
 
 const createInitialState = (): GameState => ({
+  viewportWidth: CANVAS_WIDTH,
   status: "idle",
   score: 0,
   bestScore: loadBestScore(),
@@ -95,26 +97,10 @@ const getCurrentSpeed = (score: number): number => {
 const checkCollision = (state: GameState): boolean => {
   const { bird, pipes } = state;
 
-  /* Ceiling collision */
-  if (bird.y <= 0) return true;
-
-  /* Ground collision */
-  if (bird.y + bird.height >= GROUND.y) return true;
-
-  /* Pipe collision - AABB check */
+  const bounds = birdVerticalBounds(bird);
+  if (bounds.top <= 0 || bounds.bottom >= GROUND.y) return true;
   for (const pipe of pipes) {
-    const pipeRight = pipe.x + PIPE.width;
-    const birdRight = bird.x + bird.width;
-
-    /* Horizontal overlap check */
-    if (birdRight > pipe.x && bird.x < pipeRight) {
-      /* Top pipe collision */
-      if (bird.y < pipe.topHeight) return true;
-
-      /* Bottom pipe collision */
-      const bottomPipeTop = pipe.topHeight + PIPE.gap;
-      if (bird.y + bird.height > bottomPipeTop) return true;
-    }
+    if (pipeRects(pipe).some((rect) => birdHitsRect(bird, rect))) return true;
   }
 
   return false;
@@ -127,13 +113,27 @@ const checkCollision = (state: GameState): boolean => {
 export const useGameStore = create<GameState & GameActions>((set, get) => ({
   ...createInitialState(),
 
+  setViewportWidth: (viewportWidth) => {
+    if (!Number.isFinite(viewportWidth) || viewportWidth <= 0) return;
+    set((state) => {
+      const pipes = [...state.pipes];
+      // Fill newly exposed space without moving existing obstacles or the bird.
+      if (state.status === "playing" && pipes.length) {
+        while (pipes[pipes.length - 1].x < viewportWidth + PIPE.spacing) {
+          pipes.push(createPipePair(pipes[pipes.length - 1].x + PIPE.spacing));
+        }
+      }
+      return { viewportWidth, pipes };
+    });
+  },
+
   /** Transition from idle to playing */
   startGame: () => {
-    const initialPipes = [
-      createPipePair(CANVAS_HEIGHT + 100),
-      createPipePair(CANVAS_HEIGHT + 100 + PIPE.spacing),
-      createPipePair(CANVAS_HEIGHT + 100 + PIPE.spacing * 2),
-    ];
+    // Fixed approach time, independent of how far the viewport extends.
+    const initialPipes = [createPipePair(BIRD.x + 620)];
+    while (initialPipes[initialPipes.length - 1].x < get().viewportWidth + PIPE.spacing) {
+      initialPipes.push(createPipePair(initialPipes[initialPipes.length - 1].x + PIPE.spacing));
+    }
 
     set({
       status: "playing",
@@ -209,7 +209,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
         const newX = pipe.x - pipeMove;
 
         /* Score when bird passes a pipe */
-        if (!pipe.passed && newX + PIPE.width < state.bird.x) {
+        if (!pipe.passed && newX + PIPE.width + PIPE.capOverhang + 1 < state.bird.x) {
           newScore += SCORE.pointsPerPipe;
           return { ...pipe, x: newX, passed: true };
         }
@@ -217,17 +217,16 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
         return { ...pipe, x: newX };
       })
       /* Remove off-screen pipes */
-      .filter((pipe) => pipe.x > -PIPE.width);
+      .filter((pipe) => pipe.x + PIPE.width + PIPE.capOverhang + 1 > 0);
 
     /* Add new pipes when needed */
-    const lastPipe = newPipes[newPipes.length - 1];
-    if (lastPipe && lastPipe.x < CANVAS_HEIGHT - PIPE.spacing) {
-      newPipes.push(createPipePair(lastPipe.x + PIPE.spacing));
+    while (newPipes.length && newPipes[newPipes.length - 1].x < state.viewportWidth + PIPE.spacing) {
+      newPipes.push(createPipePair(newPipes[newPipes.length - 1].x + PIPE.spacing));
     }
 
     /* Scroll ground — synced with dynamic pipe speed */
     const newGroundOffset =
-      (state.groundOffset + currentSpeed * dt) % CANVAS_HEIGHT;
+      (state.groundOffset + currentSpeed * dt) % state.viewportWidth;
 
     const newState = {
       bird: newBird,
@@ -256,6 +255,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   reset: () => {
     set({
       ...createInitialState(),
+      viewportWidth: get().viewportWidth,
       bestScore: loadBestScore(),
     });
   },

@@ -44,7 +44,7 @@ const SoundToggle = () => {
       type="button"
       onClick={handleClick}
       onTouchStart={(e) => e.stopPropagation()}
-      className="absolute top-2 right-2 z-20 flex h-9 w-9 items-center justify-center rounded-lg border border-white/20 bg-black/40 text-lg transition-colors hover:bg-black/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+      className="absolute top-2 left-2 z-20 flex h-9 w-9 items-center justify-center rounded-lg border border-white/20 bg-black/40 text-lg transition-colors hover:bg-black/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
       aria-label={enabled ? "Mute sound" : "Unmute sound"}
       aria-pressed={!enabled}
       title={enabled ? "Mute (M)" : "Unmute (M)"}

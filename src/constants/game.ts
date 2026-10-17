@@ -4,8 +4,8 @@
    ======================================== */
 
 /** Canvas dimensions */
-export const CANVAS_WIDTH = 400;
 export const CANVAS_HEIGHT = 600;
+export const CANVAS_WIDTH = CANVAS_HEIGHT * 16 / 9;
 
 /** Target frame time in ms (60fps baseline) */
 export const TARGET_FRAME_MS = 1000 / 60;
@@ -60,11 +60,11 @@ export const PIPE = {
 /** Ground configuration */
 export const GROUND = {
   /** Ground height in pixels */
-  height: 80,
+  height: CANVAS_HEIGHT * (1 - 849 / 941),
   /** Ground scroll speed (matches pipe speed) */
   speed: PIPE.speed,
   /** Y position of ground top */
-  y: CANVAS_HEIGHT - 80,
+  y: CANVAS_HEIGHT * 849 / 941,
 } as const;
 
 /** Scoring */

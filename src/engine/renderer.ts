@@ -1,5 +1,4 @@
 import {
-  CANVAS_WIDTH,
   CANVAS_HEIGHT,
   PIPE,
   GROUND,
@@ -13,48 +12,23 @@ import type { Bird, PipePair } from "../types/game";
    Handles all drawing operations for the game.
    ======================================== */
 
-/* ========================================
-   GDG Championship Background
-   ======================================== */
-
-
-/* ========================================
-   GDG on Campus Background
-   Fullscreen 16:9 pixel-art
-   ======================================== */
-
-
+// Original asset stays untouched. Grass begins at source row 849 of 941.
 const gdgBackground = new Image();
 gdgBackground.src = "/images/gdg-background-16x9.png";
 
-export const drawBackground = (
-  ctx: CanvasRenderingContext2D
-): void => {
-
-  if (
-    gdgBackground.complete &&
-    gdgBackground.naturalWidth > 0
-  ) {
-    ctx.drawImage(
-      gdgBackground,
-      0,
-      0,
-      CANVAS_WIDTH,
-      CANVAS_HEIGHT
-    );
-    return;
-  }
-
-  // Fallback while loading
-  const gradient = ctx.createLinearGradient(
-    0, 0, 0, CANVAS_HEIGHT
-  );
-
+export const drawBackground = (ctx: CanvasRenderingContext2D, width: number): void => {
+  const gradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
   gradient.addColorStop(0, COLORS.skyTop);
   gradient.addColorStop(1, COLORS.skyBottom);
-
   ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  ctx.fillRect(0, 0, width, CANVAS_HEIGHT);
+  if (!gdgBackground.complete || !gdgBackground.naturalWidth) return;
+  const scale = Math.max(width / gdgBackground.naturalWidth,
+    CANVAS_HEIGHT / gdgBackground.naturalHeight);
+  const w = gdgBackground.naturalWidth * scale;
+  const h = gdgBackground.naturalHeight * scale;
+  // Right focal point retains branding; align the grass with physics even on ultrawide.
+  ctx.drawImage(gdgBackground, width - w, GROUND.y - h * 849 / 941, w, h);
 };
 
 /** Draw a single pipe (top or bottom) */
@@ -195,20 +169,23 @@ export const drawBird = (
 /** Draw the current score on screen (HUD) */
 export const drawScore = (
   ctx: CanvasRenderingContext2D,
-  score: number
+  score: number,
+  width: number
 ): void => {
+  ctx.save();
   const text = String(score);
-
-  ctx.font = '36px "Press Start 2P", monospace';
+  // A local bold numeric font stays legible even before the web font loads.
+  ctx.font = "bold 36px monospace";
   ctx.textAlign = "center";
-
-  /* Shadow */
-  ctx.fillStyle = COLORS.scoreShadow;
-  ctx.fillText(text, CANVAS_WIDTH / 2 + 2, 62);
-
-  /* Main text */
+  ctx.textBaseline = "top";
+  ctx.lineJoin = "round";
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = COLORS.scoreShadow;
   ctx.fillStyle = COLORS.scoreText;
-  ctx.fillText(text, CANVAS_WIDTH / 2, 60);
+  // Below the background logo band, centered in the actual visible world.
+  ctx.strokeText(text, width / 2, 100);
+  ctx.fillText(text, width / 2, 100);
+  ctx.restore();
 };
 
 /** Draw idle state bird floating animation */
@@ -228,6 +205,6 @@ export const drawIdleBird = (
 };
 
 /** Clear the entire canvas */
-export const clearCanvas = (ctx: CanvasRenderingContext2D): void => {
-  ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+export const clearCanvas = (ctx: CanvasRenderingContext2D, width: number): void => {
+  ctx.clearRect(0, 0, width, CANVAS_HEIGHT);
 };

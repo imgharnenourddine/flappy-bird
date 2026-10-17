@@ -12,7 +12,7 @@ import { useGameInteraction } from "../hooks/useGameInteraction";
    GamePage
    Main game page that composes canvas and UI overlays.
    The container dynamically scales to fill the viewport
-   while maintaining the native 2:3 aspect ratio.
+   with uniform world scaling.
    ======================================== */
 
 const GamePage = () => {
@@ -55,9 +55,9 @@ const GamePage = () => {
 
   return (
     <div ref={containerRef} className="game-container bg-black">
-      <div className="flex flex-col items-center">
+      <div className="w-full h-full">
         <div
-          className="relative overflow-hidden rounded-lg shadow-2xl cursor-pointer"
+          className="relative w-full h-full overflow-hidden cursor-pointer"
           style={{ width: "100%", height: "100%", touchAction: "none" }}
           onClick={handleClick}
           onTouchStart={handleTouchStart}
@@ -73,10 +73,24 @@ const GamePage = () => {
 
           {/* Sound mute / unmute control */}
           <SoundToggle />
+          <button
+            type="button"
+            className="absolute bottom-4 right-4 z-20 rounded-lg border border-white/30 bg-black/50 px-3 py-2 text-xs text-white"
+            onTouchStart={(e) => e.stopPropagation()}
+            onClick={async (e) => {
+              e.stopPropagation();
+              e.currentTarget.blur();
+              try {
+                if (document.fullscreenElement) await document.exitFullscreen();
+                else await containerRef.current?.requestFullscreen();
+              } catch { /* The viewport remains filled if browser fullscreen is unavailable. */ }
+            }}
+            aria-label="Toggle fullscreen"
+          >⛶ Fullscreen</button>
         </div>
 
         {/* Footer */}
-        <footer className="sign mt-3 text-center text-[10px] text-gray-500 tracking-wider">
+        <footer className="absolute bottom-1 left-0 w-full z-20 text-center text-[10px] text-gray-700 tracking-wider">
           Created by{" "}
           <a
             href="https://serkanbayraktar.com/"
