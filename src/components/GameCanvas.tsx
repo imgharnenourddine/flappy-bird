@@ -73,6 +73,8 @@ const GameCanvas = () => {
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
+      ctx.imageSmoothingEnabled = false;
+
       /* Accumulate real elapsed time for animations */
       animTimeRef.current += deltaTime;
 

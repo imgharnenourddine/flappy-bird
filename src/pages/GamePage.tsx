@@ -6,7 +6,7 @@ import SoundToggle from "../components/SoundToggle";
 import { useInputHandler } from "../hooks/useInputHandler";
 import { useSoundEffects } from "../hooks/useSoundEffects";
 import { useGameInteraction } from "../hooks/useGameInteraction";
-import { useResponsiveCanvas } from "../hooks/useResponsiveCanvas";
+
 
 /* ========================================
    GamePage
@@ -17,7 +17,7 @@ import { useResponsiveCanvas } from "../hooks/useResponsiveCanvas";
 
 const GamePage = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { displayWidth, displayHeight } = useResponsiveCanvas(containerRef);
+
 
   /**
    * Track whether the last interaction came from a touch event.
@@ -58,7 +58,7 @@ const GamePage = () => {
       <div className="flex flex-col items-center">
         <div
           className="relative overflow-hidden rounded-lg shadow-2xl cursor-pointer"
-          style={{ width: displayWidth, height: displayHeight }}
+          style={{ width: "100%", height: "100%", touchAction: "none" }}
           onClick={handleClick}
           onTouchStart={handleTouchStart}
           role="application"

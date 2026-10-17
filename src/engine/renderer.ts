@@ -13,11 +13,46 @@ import type { Bird, PipePair } from "../types/game";
    Handles all drawing operations for the game.
    ======================================== */
 
-/** Draw the sky gradient background */
-export const drawBackground = (ctx: CanvasRenderingContext2D): void => {
-  const gradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
+/* ========================================
+   GDG Championship Background
+   ======================================== */
+
+
+/* ========================================
+   GDG on Campus Background
+   Fullscreen 16:9 pixel-art
+   ======================================== */
+
+
+const gdgBackground = new Image();
+gdgBackground.src = "/images/gdg-background-16x9.png";
+
+export const drawBackground = (
+  ctx: CanvasRenderingContext2D
+): void => {
+
+  if (
+    gdgBackground.complete &&
+    gdgBackground.naturalWidth > 0
+  ) {
+    ctx.drawImage(
+      gdgBackground,
+      0,
+      0,
+      CANVAS_WIDTH,
+      CANVAS_HEIGHT
+    );
+    return;
+  }
+
+  // Fallback while loading
+  const gradient = ctx.createLinearGradient(
+    0, 0, 0, CANVAS_HEIGHT
+  );
+
   gradient.addColorStop(0, COLORS.skyTop);
   gradient.addColorStop(1, COLORS.skyBottom);
+
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 };
@@ -80,41 +115,15 @@ export const drawPipes = (
 };
 
 /** Draw the ground with scrolling texture */
+/**
+ * Custom GDG background already contains grass and soil.
+ * Ground collision remains active in the game store.
+ */
 export const drawGround = (
-  ctx: CanvasRenderingContext2D,
-  offset: number
+  _ctx: CanvasRenderingContext2D,
+  _offset: number
 ): void => {
-  /* Ground fill */
-  const groundGradient = ctx.createLinearGradient(
-    0,
-    GROUND.y,
-    0,
-    CANVAS_HEIGHT
-  );
-  groundGradient.addColorStop(0, COLORS.groundLine);
-  groundGradient.addColorStop(0.05, COLORS.groundTop);
-  groundGradient.addColorStop(1, COLORS.groundBottom);
-  ctx.fillStyle = groundGradient;
-  ctx.fillRect(0, GROUND.y, CANVAS_WIDTH, GROUND.height);
-
-  /* Ground line */
-  ctx.strokeStyle = COLORS.groundLine;
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(0, GROUND.y);
-  ctx.lineTo(CANVAS_WIDTH, GROUND.y);
-  ctx.stroke();
-
-  /* Scrolling dash pattern */
-  ctx.strokeStyle = COLORS.groundBottom;
-  ctx.lineWidth = 1;
-  ctx.setLineDash([12, 8]);
-  ctx.lineDashOffset = -offset;
-  ctx.beginPath();
-  ctx.moveTo(0, GROUND.y + 15);
-  ctx.lineTo(CANVAS_WIDTH, GROUND.y + 15);
-  ctx.stroke();
-  ctx.setLineDash([]);
+  // Intentionally empty
 };
 
 /** Draw the bird with rotation */

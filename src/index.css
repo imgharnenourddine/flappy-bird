@@ -89,3 +89,12 @@ body,
     1px -1px 0 #000,
     -1px 1px 0 #000;
 }
+
+
+/* ========================================
+   GDG Championship - Pixel Art
+   ======================================== */
+
+.game-container canvas {
+  image-rendering: pixelated;
+}
