@@ -5,6 +5,7 @@ import {
   COLORS,
   BIRD,
 } from "../constants/game";
+import { drawChampionshipPipe, drawPixelBird } from "./entityArt";
 import type { Bird, PipePair } from "../types/game";
 
 /* ========================================
@@ -40,36 +41,7 @@ const drawPipeSegment = (
   height: number,
   isTop: boolean
 ): void => {
-  /* Pipe body */
-  const bodyGradient = ctx.createLinearGradient(x, 0, x + width, 0);
-  bodyGradient.addColorStop(0, COLORS.pipeBorder);
-  bodyGradient.addColorStop(0.2, COLORS.pipeHighlight);
-  bodyGradient.addColorStop(0.4, COLORS.pipeBody);
-  bodyGradient.addColorStop(1, COLORS.pipeBorder);
-  ctx.fillStyle = bodyGradient;
-  ctx.fillRect(x, y, width, height);
-
-  /* Pipe border */
-  ctx.strokeStyle = COLORS.pipeBorder;
-  ctx.lineWidth = 2;
-  ctx.strokeRect(x, y, width, height);
-
-  /* Pipe cap */
-  const capX = x - PIPE.capOverhang;
-  const capWidth = width + PIPE.capOverhang * 2;
-  const capY = isTop ? y + height - PIPE.capHeight : y;
-
-  const capGradient = ctx.createLinearGradient(capX, 0, capX + capWidth, 0);
-  capGradient.addColorStop(0, COLORS.pipeCapBorder);
-  capGradient.addColorStop(0.15, COLORS.pipeHighlight);
-  capGradient.addColorStop(0.4, COLORS.pipeCap);
-  capGradient.addColorStop(1, COLORS.pipeCapBorder);
-
-  ctx.fillStyle = capGradient;
-  ctx.fillRect(capX, capY, capWidth, PIPE.capHeight);
-  ctx.strokeStyle = COLORS.pipeCapBorder;
-  ctx.lineWidth = 2;
-  ctx.strokeRect(capX, capY, capWidth, PIPE.capHeight);
+  drawChampionshipPipe(ctx, x, y, width, height, PIPE.capHeight, PIPE.capOverhang, isTop);
 };
 
 /** Draw all pipe pairs */
@@ -106,64 +78,7 @@ export const drawBird = (
   bird: Bird,
   flapFrame: number
 ): void => {
-  ctx.save();
-
-  /* Translate to bird center for rotation */
-  const centerX = bird.x + bird.width / 2;
-  const centerY = bird.y + bird.height / 2;
-  ctx.translate(centerX, centerY);
-  ctx.rotate((bird.rotation * Math.PI) / 180);
-
-  const hw = bird.width / 2;
-  const hh = bird.height / 2;
-
-  /* Body (ellipse) */
-  ctx.beginPath();
-  ctx.ellipse(0, 0, hw, hh, 0, 0, Math.PI * 2);
-  ctx.fillStyle = COLORS.birdBody;
-  ctx.fill();
-  ctx.strokeStyle = "#d4a017";
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-
-  /* Wing */
-  const wingOffset = Math.sin(flapFrame * 0.5) * 4;
-  ctx.beginPath();
-  ctx.ellipse(-4, wingOffset, hw * 0.5, hh * 0.6, -0.3, 0, Math.PI * 2);
-  ctx.fillStyle = COLORS.birdWing;
-  ctx.fill();
-  ctx.strokeStyle = "#c4960f";
-  ctx.lineWidth = 1;
-  ctx.stroke();
-
-  /* Eye */
-  ctx.beginPath();
-  ctx.arc(hw * 0.45, -hh * 0.2, 5, 0, Math.PI * 2);
-  ctx.fillStyle = COLORS.birdEye;
-  ctx.fill();
-  ctx.strokeStyle = "#333";
-  ctx.lineWidth = 1;
-  ctx.stroke();
-
-  /* Pupil */
-  ctx.beginPath();
-  ctx.arc(hw * 0.55, -hh * 0.2, 2.5, 0, Math.PI * 2);
-  ctx.fillStyle = COLORS.birdPupil;
-  ctx.fill();
-
-  /* Beak */
-  ctx.beginPath();
-  ctx.moveTo(hw * 0.7, hh * 0.1);
-  ctx.lineTo(hw + 8, hh * 0.05);
-  ctx.lineTo(hw * 0.7, hh * 0.4);
-  ctx.closePath();
-  ctx.fillStyle = COLORS.birdBeak;
-  ctx.fill();
-  ctx.strokeStyle = "#c0392b";
-  ctx.lineWidth = 1;
-  ctx.stroke();
-
-  ctx.restore();
+  drawPixelBird(ctx, bird, flapFrame);
 };
 
 /** Draw the current score on screen (HUD) */
